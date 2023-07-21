@@ -1,41 +1,37 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
-//import { FIREBASE_AUTH } from './firebase';
-//import { useNavigation } from '@react-navigation/native';
+import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { FIREBASE_AUTH } from './firebase';
+import { useNavigation } from '@react-navigation/native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
-const LoginScreen = ({ onSwitchScreen }) => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
 
-//   const navigation = useNavigation();
 
-//   useEffect(() => {
-//     const unsubscribe = auth.onAuthStateChanged(user => {
-//       if (user) {
-//         navigation.replace("Home")
-//       }
-//     })
-
-//     return unsubscribe
-//   }, [])
-
-//   const handleLogin = () => {
-//     FIREBASE_AUTH
-//     .signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
-//     .then(userCredential => {
-//         const user = userCredential.user;
-//         console.log("Logged in with", user.email);
-//     })
-//     .catch(error => {
-//         alert(error.message)
-//     })
+  const handleLogin = () => {
+    signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
+    .then(userCredential => {
+        const user = userCredential.user;
+        console.log("Logged in with", user.email);
+        navigation.navigate('Home')
+    })
+    .catch(error => {
+        alert(error.message)
+    })
+  };
+// const handleLogin = () => {
+//     // Perform login logic here
 //   };
-const handleLogin = () => {
-    // Perform login logic here
+
+  const handleSignupScreen = () => {
+    navigation.navigate('Signup');
   };
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Cityscape</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -47,13 +43,12 @@ const handleLogin = () => {
         secureTextEntry
         onChangeText={(text) => setPassword(text)}
       />
-      <Button title="Log In" onPress={handleLogin} />
-      <Text style={styles.switchText}>
-        Don't have an account?{' '}
-        <Text style={styles.switchLink} onPress={onSwitchScreen}>
-          Sign up
-        </Text>
-      </Text>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Log In</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.switchButton} onPress={handleSignupScreen}>
+        <Text style={styles.switchButtonText}>Sign Up</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -65,6 +60,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
   },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 32,
+  },
   input: {
     width: '80%',
     marginBottom: 16,
@@ -72,13 +72,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
   },
-  switchText: {
-    marginTop: 16,
-    fontSize: 14,
+  loginButton: {
+    backgroundColor: '#2980b9',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 10,
+    marginBottom: 16,
   },
-  switchLink: {
-    color: 'blue',
-    textDecorationLine: 'underline',
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  switchButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+  },
+  switchButtonText: {
+    color: '#2980b9',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
